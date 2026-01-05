@@ -20,7 +20,7 @@
             margin: 0;
         }
         </style>
-        <title></title>
+        <title>Plan Ogólny Gminy Pacyna - obręb Luszyn</title>
     </head>
     <body>
         <div id="map">
@@ -38,9 +38,8 @@
         <script src="js/labels.js"></script>
         <script src="js/leaflet.photon.js"></script>
         <script src="js/leaflet-measure.js"></script>
-        <script src="data/StrefyPlanistyczne_2.js"></script>
-        <script src="data/ObszarUzupelnieniaZabudowy_1_3.js"></script>
-        <script src="data/AktPlanowaniaPrzestrzennego_1_4.js"></script>
+        <script src="data/StrefyPlanistyczne_3.js"></script>
+        <script src="data/ObszarUzupenieniaZabudowy_4.js"></script>
         <script>
         var map = L.map('map', {
             zoomControl:false, maxZoom:18, minZoom:8
@@ -109,6 +108,31 @@
                 popup._contentNode.classList.remove('media');
             }
         }
+        var title = new L.Control({'position':'topright'});
+        title.onAdd = function (map) {
+            this._div = L.DomUtil.create('div', 'info');
+            this.update();
+            return this._div;
+        };
+        title.update = function () {
+            this._div.innerHTML = '<h2>Plan Ogólny Gminy Pacyna - obręb Luszyn</h2>';
+        };
+        title.addTo(map);
+        var abstract = new L.Control({'position':'bottomright'});
+        abstract.onAdd = function (map) {
+            this._div = L.DomUtil.create('div',
+            'leaflet-control abstract');
+            this._div.id = 'abstract'
+
+                abstract.show();
+                return this._div;
+            };
+            abstract.show = function () {
+                this._div.classList.remove("abstract");
+                this._div.classList.add("abstractUncollapsed");
+                this._div.innerHTML = 'Kliknij na strefę, żeby zobaczyć szczegóły!';
+        };
+        abstract.addTo(map);
         var zoomControl = L.control.zoom({
             position: 'topleft'
         }).addTo(map);
@@ -128,10 +152,10 @@
                 map.fitBounds(bounds_group.getBounds());
             }
         }
-        map.createPane('pane_OSM_0');
-        map.getPane('pane_OSM_0').style.zIndex = 400;
-        var layer_OSM_0 = L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            pane: 'pane_OSM_0',
+        map.createPane('pane_OpenStreetMap_0');
+        map.getPane('pane_OpenStreetMap_0').style.zIndex = 400;
+        var layer_OpenStreetMap_0 = L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            pane: 'pane_OpenStreetMap_0',
             opacity: 0.499,
             attribution: '',
             minZoom: 8,
@@ -139,35 +163,62 @@
             minNativeZoom: 0,
             maxNativeZoom: 18
         });
-        layer_OSM_0;
-        map.addLayer(layer_OSM_0);
-        map.createPane('pane_GoogleSatellite_1');
-        map.getPane('pane_GoogleSatellite_1').style.zIndex = 401;
-        var layer_GoogleSatellite_1 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-            pane: 'pane_GoogleSatellite_1',
+        layer_OpenStreetMap_0;
+        map.addLayer(layer_OpenStreetMap_0);
+        map.createPane('pane_GoogleMaps_1');
+        map.getPane('pane_GoogleMaps_1').style.zIndex = 401;
+        var layer_GoogleMaps_1 = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleMaps_1',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 8,
+            maxZoom: 18,
+        });
+        layer_GoogleMaps_1;
+        map.addLayer(layer_GoogleMaps_1);
+        map.createPane('pane_GoogleSatellite_2');
+        map.getPane('pane_GoogleSatellite_2').style.zIndex = 402;
+        var layer_GoogleSatellite_2 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleSatellite_2',
             opacity: 0.368,
             attribution: '',
             minZoom: 8,
             maxZoom: 18,
         });
-        layer_GoogleSatellite_1;
-        map.addLayer(layer_GoogleSatellite_1);
-        function pop_StrefyPlanistyczne_2(feature, layer) {
+        layer_GoogleSatellite_2;
+        map.addLayer(layer_GoogleSatellite_2);
+        function pop_StrefyPlanistyczne_3(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
-                        <th scope="row">oznaczenie</th>\
-                        <td class="visible-with-data" id="oznaczenie">' + (feature.properties['oznaczenie'] !== null ? autolinker.link(String(feature.properties['oznaczenie']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                        <th scope="row">Oznaczenie</th>\
+                        <td>' + (feature.properties['oznaczenie'] !== null ? autolinker.link(String(feature.properties['oznaczenie']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <th scope="row">symbol</th>\
-                        <td class="visible-with-data" id="symbol">' + (feature.properties['symbol'] !== null ? autolinker.link(String(feature.properties['symbol']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                        <th scope="row">Symbol</th>\
+                        <td>' + (feature.properties['symbol'] !== null ? autolinker.link(String(feature.properties['symbol']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <th scope="row">nazwa</th>\
-                        <td>' + (feature.properties['nazwa'] !== null ? autolinker.link(String(feature.properties['nazwa']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                        <th scope="row">Nazwa strefy</th>\
+                        <td class="visible-with-data" id="nazwa">' + (feature.properties['nazwa'] !== null ? autolinker.link(String(feature.properties['nazwa']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td class="visible-with-data" id="profilDoda" colspan="2"><strong>profilDoda</strong><br />' + (feature.properties['profilDoda'] !== null ? autolinker.link(String(feature.properties['profilDoda']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="profilDodatkowy" colspan="2"><strong>Profil dodatkowy</strong><br />' + (feature.properties['profilDodatkowy'] !== null ? autolinker.link(String(feature.properties['profilDodatkowy']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Max. intensywność zabudowy</th>\
+                        <td class="visible-with-data" id="maksNadziemnaIntensywnoscZabudowy">' + (feature.properties['maksNadziemnaIntensywnoscZabudowy'] !== null ? autolinker.link(String(feature.properties['maksNadziemnaIntensywnoscZabudowy']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Max. udział zabudowy</th>\
+                        <td class="visible-with-data" id="maksUdzialPowierzchniZabudowy">' + (feature.properties['maksUdzialPowierzchniZabudowy'] !== null ? autolinker.link(String(feature.properties['maksUdzialPowierzchniZabudowy']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Max. wysokość zabudowy</th>\
+                        <td class="visible-with-data" id="maksWysokoscZabudowy">' + (feature.properties['maksWysokoscZabudowy'] !== null ? autolinker.link(String(feature.properties['maksWysokoscZabudowy']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Min. udział pow. biologicznie czynnej</th>\
+                        <td class="visible-with-data" id="minUdzialPowierzchniBiologicznieCzynnej">' + (feature.properties['minUdzialPowierzchniBiologicznieCzynnej'] !== null ? autolinker.link(String(feature.properties['minUdzialPowierzchniBiologicznieCzynnej']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
@@ -177,17 +228,17 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_StrefyPlanistyczne_2_0(feature) {
+        function style_StrefyPlanistyczne_3_0(feature) {
             switch(String(feature.properties['symbol'])) {
                 case 'SW':
                     return {
-                pane: 'pane_StrefyPlanistyczne_2',
+                pane: 'pane_StrefyPlanistyczne_3',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
                 lineCap: 'butt',
                 lineJoin: 'miter',
-                weight: 2.0, 
+                weight: 1.0, 
                 fill: true,
                 fillOpacity: 1,
                 fillColor: 'rgba(154,124,100,1.0)',
@@ -196,13 +247,13 @@
                     break;
                 case 'SJ':
                     return {
-                pane: 'pane_StrefyPlanistyczne_2',
+                pane: 'pane_StrefyPlanistyczne_3',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
                 lineCap: 'butt',
                 lineJoin: 'miter',
-                weight: 2.0, 
+                weight: 1.0, 
                 fill: true,
                 fillOpacity: 1,
                 fillColor: 'rgba(217,180,115,1.0)',
@@ -211,13 +262,13 @@
                     break;
                 case 'SZ':
                     return {
-                pane: 'pane_StrefyPlanistyczne_2',
+                pane: 'pane_StrefyPlanistyczne_3',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
                 lineCap: 'butt',
                 lineJoin: 'miter',
-                weight: 2.0, 
+                weight: 1.0, 
                 fill: true,
                 fillOpacity: 1,
                 fillColor: 'rgba(255,230,171,1.0)',
@@ -226,13 +277,13 @@
                     break;
                 case 'SU':
                     return {
-                pane: 'pane_StrefyPlanistyczne_2',
+                pane: 'pane_StrefyPlanistyczne_3',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
                 lineCap: 'butt',
                 lineJoin: 'miter',
-                weight: 2.0, 
+                weight: 1.0, 
                 fill: true,
                 fillOpacity: 1,
                 fillColor: 'rgba(255,108,105,1.0)',
@@ -241,13 +292,13 @@
                     break;
                 case 'SH':
                     return {
-                pane: 'pane_StrefyPlanistyczne_2',
+                pane: 'pane_StrefyPlanistyczne_3',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
                 lineCap: 'butt',
                 lineJoin: 'miter',
-                weight: 2.0, 
+                weight: 1.0, 
                 fill: true,
                 fillOpacity: 1,
                 fillColor: 'rgba(255,132,183,1.0)',
@@ -256,13 +307,13 @@
                     break;
                 case 'SP':
                     return {
-                pane: 'pane_StrefyPlanistyczne_2',
+                pane: 'pane_StrefyPlanistyczne_3',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
                 lineCap: 'butt',
                 lineJoin: 'miter',
-                weight: 2.0, 
+                weight: 1.0, 
                 fill: true,
                 fillOpacity: 1,
                 fillColor: 'rgba(175,136,222,1.0)',
@@ -271,13 +322,13 @@
                     break;
                 case 'SR':
                     return {
-                pane: 'pane_StrefyPlanistyczne_2',
+                pane: 'pane_StrefyPlanistyczne_3',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
                 lineCap: 'butt',
                 lineJoin: 'miter',
-                weight: 2.0, 
+                weight: 1.0, 
                 fill: true,
                 fillOpacity: 1,
                 fillColor: 'rgba(254,239,100,1.0)',
@@ -286,13 +337,13 @@
                     break;
                 case 'SI':
                     return {
-                pane: 'pane_StrefyPlanistyczne_2',
+                pane: 'pane_StrefyPlanistyczne_3',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
                 lineCap: 'butt',
                 lineJoin: 'miter',
-                weight: 2.0, 
+                weight: 1.0, 
                 fill: true,
                 fillOpacity: 1,
                 fillColor: 'rgba(204,204,204,1.0)',
@@ -301,13 +352,13 @@
                     break;
                 case 'SN':
                     return {
-                pane: 'pane_StrefyPlanistyczne_2',
+                pane: 'pane_StrefyPlanistyczne_3',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
                 lineCap: 'butt',
                 lineJoin: 'miter',
-                weight: 2.0, 
+                weight: 1.0, 
                 fill: true,
                 fillOpacity: 1,
                 fillColor: 'rgba(187,245,139,1.0)',
@@ -316,13 +367,13 @@
                     break;
                 case 'SC':
                     return {
-                pane: 'pane_StrefyPlanistyczne_2',
+                pane: 'pane_StrefyPlanistyczne_3',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
                 lineCap: 'butt',
                 lineJoin: 'miter',
-                weight: 2.0, 
+                weight: 1.0, 
                 fill: true,
                 fillOpacity: 1,
                 fillColor: 'rgba(148,212,196,1.0)',
@@ -331,13 +382,13 @@
                     break;
                 case 'SG':
                     return {
-                pane: 'pane_StrefyPlanistyczne_2',
+                pane: 'pane_StrefyPlanistyczne_3',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
                 lineCap: 'butt',
                 lineJoin: 'miter',
-                weight: 2.0, 
+                weight: 1.0, 
                 fill: true,
                 fillOpacity: 1,
                 fillColor: 'rgba(252,212,255,1.0)',
@@ -346,13 +397,13 @@
                     break;
                 case 'SO':
                     return {
-                pane: 'pane_StrefyPlanistyczne_2',
+                pane: 'pane_StrefyPlanistyczne_3',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
                 lineCap: 'butt',
                 lineJoin: 'miter',
-                weight: 2.0, 
+                weight: 1.0, 
                 fill: true,
                 fillOpacity: 1,
                 fillColor: 'rgba(227,255,199,1.0)',
@@ -361,13 +412,13 @@
                     break;
                 case 'SK':
                     return {
-                pane: 'pane_StrefyPlanistyczne_2',
+                pane: 'pane_StrefyPlanistyczne_3',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
                 lineCap: 'butt',
                 lineJoin: 'miter',
-                weight: 2.0, 
+                weight: 1.0, 
                 fill: true,
                 fillOpacity: 1,
                 fillColor: 'rgba(242,242,242,1.0)',
@@ -376,25 +427,43 @@
                     break;
             }
         }
-        map.createPane('pane_StrefyPlanistyczne_2');
-        map.getPane('pane_StrefyPlanistyczne_2').style.zIndex = 402;
-        map.getPane('pane_StrefyPlanistyczne_2').style['mix-blend-mode'] = 'normal';
-        var layer_StrefyPlanistyczne_2 = new L.geoJson(json_StrefyPlanistyczne_2, {
+        map.createPane('pane_StrefyPlanistyczne_3');
+        map.getPane('pane_StrefyPlanistyczne_3').style.zIndex = 403;
+        map.getPane('pane_StrefyPlanistyczne_3').style['mix-blend-mode'] = 'normal';
+        var layer_StrefyPlanistyczne_3 = new L.geoJson(json_StrefyPlanistyczne_3, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_StrefyPlanistyczne_2',
-            layerName: 'layer_StrefyPlanistyczne_2',
-            pane: 'pane_StrefyPlanistyczne_2',
-            onEachFeature: pop_StrefyPlanistyczne_2,
-            style: style_StrefyPlanistyczne_2_0,
+            dataVar: 'json_StrefyPlanistyczne_3',
+            layerName: 'layer_StrefyPlanistyczne_3',
+            pane: 'pane_StrefyPlanistyczne_3',
+            onEachFeature: pop_StrefyPlanistyczne_3,
+            style: style_StrefyPlanistyczne_3_0,
         });
-        bounds_group.addLayer(layer_StrefyPlanistyczne_2);
-        map.addLayer(layer_StrefyPlanistyczne_2);
-        function pop_ObszarUzupelnieniaZabudowy_1_3(feature, layer) {
+        bounds_group.addLayer(layer_StrefyPlanistyczne_3);
+        map.addLayer(layer_StrefyPlanistyczne_3);
+        function pop_ObszarUzupenieniaZabudowy_4(feature, layer) {
             var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['przestrzen'] !== null ? autolinker.link(String(feature.properties['przestrzen']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
                     <tr>\
                         <th scope="row">oznaczenie</th>\
                         <td class="visible-with-data" id="oznaczenie">' + (feature.properties['oznaczenie'] !== null ? autolinker.link(String(feature.properties['oznaczenie']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['poczatekWe'] !== null ? autolinker.link(String(feature.properties['poczatekWe']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['koniecWers'] !== null ? autolinker.link(String(feature.properties['koniecWers']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['obowiazuje'] !== null ? autolinker.link(String(feature.properties['obowiazuje']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['obowiazu_1'] !== null ? autolinker.link(String(feature.properties['obowiazu_1']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['charakterU'] !== null ? autolinker.link(String(feature.properties['charakterU']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
@@ -404,9 +473,9 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_ObszarUzupelnieniaZabudowy_1_3_0() {
+        function style_ObszarUzupenieniaZabudowy_4_0() {
             return {
-                pane: 'pane_ObszarUzupelnieniaZabudowy_1_3',
+                pane: 'pane_ObszarUzupenieniaZabudowy_4',
                 opacity: 1,
                 color: 'rgba(83,83,83,1.0)',
                 dashArray: '',
@@ -417,7 +486,7 @@
                 interactive: false,
             }
         }
-        var pattern_ObszarUzupelnieniaZabudowy_1_3_1 = new L.StripePattern({
+        var pattern_ObszarUzupenieniaZabudowy_4_1 = new L.StripePattern({
             weight: 0.4,
             spaceWeight: 2.0,
             color: '#535353',
@@ -425,76 +494,36 @@
             spaceOpacity: 0,
             angle: 270
         });
-        pattern_ObszarUzupelnieniaZabudowy_1_3_1.addTo(map);
-        function style_ObszarUzupelnieniaZabudowy_1_3_1() {
+        pattern_ObszarUzupenieniaZabudowy_4_1.addTo(map);
+        function style_ObszarUzupenieniaZabudowy_4_1() {
             return {
-                pane: 'pane_ObszarUzupelnieniaZabudowy_1_3',
+                pane: 'pane_ObszarUzupenieniaZabudowy_4',
                 stroke: false,
                 fillOpacity: 1,
-                fillPattern: pattern_ObszarUzupelnieniaZabudowy_1_3_1,
+                fillPattern: pattern_ObszarUzupenieniaZabudowy_4_1,
                 interactive: false,
             }
         }
-        map.createPane('pane_ObszarUzupelnieniaZabudowy_1_3');
-        map.getPane('pane_ObszarUzupelnieniaZabudowy_1_3').style.zIndex = 403;
-        map.getPane('pane_ObszarUzupelnieniaZabudowy_1_3').style['mix-blend-mode'] = 'normal';
-        var layer_ObszarUzupelnieniaZabudowy_1_3 = new L.geoJson.multiStyle(json_ObszarUzupelnieniaZabudowy_1_3, {
+        map.createPane('pane_ObszarUzupenieniaZabudowy_4');
+        map.getPane('pane_ObszarUzupenieniaZabudowy_4').style.zIndex = 404;
+        map.getPane('pane_ObszarUzupenieniaZabudowy_4').style['mix-blend-mode'] = 'normal';
+        var layer_ObszarUzupenieniaZabudowy_4 = new L.geoJson.multiStyle(json_ObszarUzupenieniaZabudowy_4, {
             attribution: '',
             interactive: false,
-            dataVar: 'json_ObszarUzupelnieniaZabudowy_1_3',
-            layerName: 'layer_ObszarUzupelnieniaZabudowy_1_3',
-            pane: 'pane_ObszarUzupelnieniaZabudowy_1_3',
-            onEachFeature: pop_ObszarUzupelnieniaZabudowy_1_3,
-            styles: [style_ObszarUzupelnieniaZabudowy_1_3_0,style_ObszarUzupelnieniaZabudowy_1_3_1,]
+            dataVar: 'json_ObszarUzupenieniaZabudowy_4',
+            layerName: 'layer_ObszarUzupenieniaZabudowy_4',
+            pane: 'pane_ObszarUzupenieniaZabudowy_4',
+            onEachFeature: pop_ObszarUzupenieniaZabudowy_4,
+            styles: [style_ObszarUzupenieniaZabudowy_4_0,style_ObszarUzupenieniaZabudowy_4_1,]
         });
-        bounds_group.addLayer(layer_ObszarUzupelnieniaZabudowy_1_3);
-        map.addLayer(layer_ObszarUzupelnieniaZabudowy_1_3);
-        function pop_AktPlanowaniaPrzestrzennego_1_4(feature, layer) {
-            var popupContent = '<table>\
-                    <tr>\
-                        <td class="visible-with-data" id="tytul" colspan="2"><strong>tytul</strong><br />' + (feature.properties['tytul'] !== null ? autolinker.link(String(feature.properties['tytul']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                </table>';
-            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
-			layer.on('popupopen', function(e) {
-				addClassToPopupIfMedia(content, e.popup);
-			});
-			layer.bindPopup(content, { maxHeight: 400 });
-        }
-
-        function style_AktPlanowaniaPrzestrzennego_1_4_0() {
-            return {
-                pane: 'pane_AktPlanowaniaPrzestrzennego_1_4',
-                opacity: 1,
-                color: 'rgba(83,83,83,1.0)',
-                dashArray: '44.0,22.0',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 11.0,
-                fillOpacity: 0,
-                interactive: false,
-            }
-        }
-        map.createPane('pane_AktPlanowaniaPrzestrzennego_1_4');
-        map.getPane('pane_AktPlanowaniaPrzestrzennego_1_4').style.zIndex = 404;
-        map.getPane('pane_AktPlanowaniaPrzestrzennego_1_4').style['mix-blend-mode'] = 'normal';
-        var layer_AktPlanowaniaPrzestrzennego_1_4 = new L.geoJson(json_AktPlanowaniaPrzestrzennego_1_4, {
-            attribution: '',
-            interactive: false,
-            dataVar: 'json_AktPlanowaniaPrzestrzennego_1_4',
-            layerName: 'layer_AktPlanowaniaPrzestrzennego_1_4',
-            pane: 'pane_AktPlanowaniaPrzestrzennego_1_4',
-            onEachFeature: pop_AktPlanowaniaPrzestrzennego_1_4,
-            style: style_AktPlanowaniaPrzestrzennego_1_4_0,
-        });
-        bounds_group.addLayer(layer_AktPlanowaniaPrzestrzennego_1_4);
-        map.addLayer(layer_AktPlanowaniaPrzestrzennego_1_4);
+        bounds_group.addLayer(layer_ObszarUzupenieniaZabudowy_4);
+        map.addLayer(layer_ObszarUzupenieniaZabudowy_4);
         var overlaysTree = [
-            {label: '<img src="legend/AktPlanowaniaPrzestrzennego_1_4.png" /> AktPlanowaniaPrzestrzennego_1', layer: layer_AktPlanowaniaPrzestrzennego_1_4},
-            {label: '<img src="legend/ObszarUzupelnieniaZabudowy_1_3.png" /> ObszarUzupelnieniaZabudowy_1', layer: layer_ObszarUzupelnieniaZabudowy_1_3},
-            {label: 'Strefy Planistyczne<br /><table><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_tududud0.png" /></td><td>tududud</td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_1.png" /></td><td></td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_2.png" /></td><td></td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_3.png" /></td><td></td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_4.png" /></td><td></td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_5.png" /></td><td></td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_6.png" /></td><td></td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_7.png" /></td><td></td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_8.png" /></td><td></td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_9.png" /></td><td></td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_10.png" /></td><td></td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_11.png" /></td><td></td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_12.png" /></td><td></td></tr></table>', layer: layer_StrefyPlanistyczne_2},
-            {label: "Google Satellite", layer: layer_GoogleSatellite_1},
-            {label: "OSM", layer: layer_OSM_0},]
+            {label: '<img src="legend/ObszarUzupenieniaZabudowy_4.png" /> Obszar Uzupełnienia Zabudowy', layer: layer_ObszarUzupenieniaZabudowy_4},
+            {label: 'Strefy Planistyczne<br /><table><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_3_Strefazabudowywielorodzinnej0.png" /></td><td>Strefa zabudowy wielorodzinnej</td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_3_Strefazabudowyjednorodzinnej1.png" /></td><td>Strefa zabudowy jednorodzinnej</td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_3_Strefazagrodowa2.png" /></td><td>Strefa zagrodowa</td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_3_Strefausług3.png" /></td><td>Strefa usług</td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_3_Strefahandluwielkopowierzchniowego4.png" /></td><td>Strefa handlu wielkopowierzchniowego</td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_3_Strefagospodarcza5.png" /></td><td>Strefa gospodarcza</td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_3_Strefaprodukcjirolniczej6.png" /></td><td>Strefa produkcji rolniczej</td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_3_Strefainfrastrukturalna7.png" /></td><td>Strefa infrastrukturalna</td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_3_Strefazieleniirekreacji8.png" /></td><td>Strefa zieleni i rekreacji</td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_3_Strefacmentarzy9.png" /></td><td>Strefa cmentarzy</td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_3_Strefagórnicza10.png" /></td><td>Strefa górnicza</td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_3_Strefaotwarta11.png" /></td><td>Strefa otwarta</td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_3_Strefakomunikacyjna12.png" /></td><td>Strefa komunikacyjna</td></tr></table>', layer: layer_StrefyPlanistyczne_3},
+            {label: "Google Satellite", layer: layer_GoogleSatellite_2},
+            {label: "Google Maps", layer: layer_GoogleMaps_1},
+            {label: "OpenStreetMap", layer: layer_OpenStreetMap_0},]
         var lay = L.control.layers.tree(null, overlaysTree,{
             //namedToggle: true,
             //selectorBack: false,
@@ -557,12 +586,12 @@
         });       
         setBounds();
         var i = 0;
-        layer_StrefyPlanistyczne_2.eachLayer(function(layer) {
+        layer_StrefyPlanistyczne_3.eachLayer(function(layer) {
             var context = {
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((layer.feature.properties['oznaczenie'] !== null?String('<div style="color: #000000; font-size: 11pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['oznaczenie']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_StrefyPlanistyczne_2'});
+            layer.bindTooltip((layer.feature.properties['oznaczenie'] !== null?String('<div style="color: #000000; font-size: 11pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['oznaczenie']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_StrefyPlanistyczne_3'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
@@ -570,27 +599,27 @@
               i++;
         });
         var i = 0;
-        layer_ObszarUzupelnieniaZabudowy_1_3.eachLayer(function(layer) {
+        layer_ObszarUzupenieniaZabudowy_4.eachLayer(function(layer) {
             var context = {
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((layer.feature.properties['oznaczenie'] !== null?String('<div style="color: #323232; font-size: 3pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['oznaczenie']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_ObszarUzupelnieniaZabudowy_1_3'});
+            layer.bindTooltip((layer.feature.properties['oznaczenie'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['oznaczenie']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_ObszarUzupenieniaZabudowy_4'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
               addLabel(layer, i);
               i++;
         });
-        resetLabels([layer_StrefyPlanistyczne_2,layer_ObszarUzupelnieniaZabudowy_1_3]);
+        resetLabels([layer_StrefyPlanistyczne_3,layer_ObszarUzupenieniaZabudowy_4]);
         map.on("zoomend", function(){
-            resetLabels([layer_StrefyPlanistyczne_2,layer_ObszarUzupelnieniaZabudowy_1_3]);
+            resetLabels([layer_StrefyPlanistyczne_3,layer_ObszarUzupenieniaZabudowy_4]);
         });
         map.on("layeradd", function(){
-            resetLabels([layer_StrefyPlanistyczne_2,layer_ObszarUzupelnieniaZabudowy_1_3]);
+            resetLabels([layer_StrefyPlanistyczne_3,layer_ObszarUzupenieniaZabudowy_4]);
         });
         map.on("layerremove", function(){
-            resetLabels([layer_StrefyPlanistyczne_2,layer_ObszarUzupelnieniaZabudowy_1_3]);
+            resetLabels([layer_StrefyPlanistyczne_3,layer_ObszarUzupenieniaZabudowy_4]);
         });
         </script>        
     </body>
