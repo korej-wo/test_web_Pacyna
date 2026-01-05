@@ -8,11 +8,8 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <link rel="stylesheet" href="css/leaflet.css">
         <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
-        <link rel="stylesheet" href="css/L.Control.Locate.min.css">
         <link rel="stylesheet" href="css/qgis2web.css">
         <link rel="stylesheet" href="css/fontawesome-all.min.css">
-        <link rel="stylesheet" href="css/filter.css">
-<link rel="stylesheet" href="css/nouislider.min.css">
         <link rel="stylesheet" href="css/leaflet.photon.css">
         <link rel="stylesheet" href="css/leaflet-measure.css">
         <style>
@@ -31,7 +28,6 @@
         <script src="js/qgis2web_expressions.js"></script>
         <script src="js/leaflet.js"></script>
         <script src="js/L.Control.Layers.Tree.min.js"></script>
-        <script src="js/L.Control.Locate.min.js"></script>
         <script src="js/multi-style-layer.js"></script>
         <script src="js/leaflet.rotatedMarker.js"></script>
         <script src="js/leaflet.pattern.js"></script>
@@ -42,16 +38,13 @@
         <script src="js/labels.js"></script>
         <script src="js/leaflet.photon.js"></script>
         <script src="js/leaflet-measure.js"></script>
-        <script src="js/tailDT.js"></script>
-<script src="js/nouislider.min.js"></script>
-<script src="js/wNumb.js"></script>
-        <script src="data/strefy_test_0.js"></script>
-        <script src="data/ObszarUzupelnieniaZabudowy_1_1.js"></script>
-        <script src="data/AktPlanowaniaPrzestrzennego_1_2.js"></script>
+        <script src="data/StrefyPlanistyczne_2.js"></script>
+        <script src="data/ObszarUzupelnieniaZabudowy_1_3.js"></script>
+        <script src="data/AktPlanowaniaPrzestrzennego_1_4.js"></script>
         <script>
         var map = L.map('map', {
-            zoomControl:false, maxZoom:16, minZoom:10
-        }).fitBounds([[52.243075054578654,19.708491504164577],[52.297502868956634,19.820252307741022]]);
+            zoomControl:false, maxZoom:18, minZoom:8
+        })
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -119,7 +112,6 @@
         var zoomControl = L.control.zoom({
             position: 'topleft'
         }).addTo(map);
-        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
         var measureControl = new L.Control.Measure({
             position: 'topleft',
             primaryLengthUnit: 'meters',
@@ -132,18 +124,47 @@
         document.getElementsByClassName('leaflet-control-measure-toggle')[0].className += ' fas fa-ruler';
         var bounds_group = new L.featureGroup([]);
         function setBounds() {
-            map.setMaxBounds(map.getBounds());
-            map.setMinZoom(map.getZoom());
+            if (bounds_group.getLayers().length) {
+                map.fitBounds(bounds_group.getBounds());
+            }
         }
-        function pop_strefy_test_0(feature, layer) {
+        map.createPane('pane_OSM_0');
+        map.getPane('pane_OSM_0').style.zIndex = 400;
+        var layer_OSM_0 = L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            pane: 'pane_OSM_0',
+            opacity: 0.499,
+            attribution: '',
+            minZoom: 8,
+            maxZoom: 18,
+            minNativeZoom: 0,
+            maxNativeZoom: 18
+        });
+        layer_OSM_0;
+        map.addLayer(layer_OSM_0);
+        map.createPane('pane_GoogleSatellite_1');
+        map.getPane('pane_GoogleSatellite_1').style.zIndex = 401;
+        var layer_GoogleSatellite_1 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleSatellite_1',
+            opacity: 0.368,
+            attribution: '',
+            minZoom: 8,
+            maxZoom: 18,
+        });
+        layer_GoogleSatellite_1;
+        map.addLayer(layer_GoogleSatellite_1);
+        function pop_StrefyPlanistyczne_2(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
                         <th scope="row">oznaczenie</th>\
-                        <td>' + (feature.properties['oznaczenie'] !== null ? autolinker.link(String(feature.properties['oznaczenie']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="oznaczenie">' + (feature.properties['oznaczenie'] !== null ? autolinker.link(String(feature.properties['oznaczenie']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
                         <th scope="row">symbol</th>\
-                        <td>' + (feature.properties['symbol'] !== null ? autolinker.link(String(feature.properties['symbol']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="symbol">' + (feature.properties['symbol'] !== null ? autolinker.link(String(feature.properties['symbol']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">nazwa</th>\
+                        <td>' + (feature.properties['nazwa'] !== null ? autolinker.link(String(feature.properties['nazwa']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
                         <td class="visible-with-data" id="profilDoda" colspan="2"><strong>profilDoda</strong><br />' + (feature.properties['profilDoda'] !== null ? autolinker.link(String(feature.properties['profilDoda']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
@@ -156,11 +177,11 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_strefy_test_0_0(feature) {
+        function style_StrefyPlanistyczne_2_0(feature) {
             switch(String(feature.properties['symbol'])) {
                 case 'SW':
                     return {
-                pane: 'pane_strefy_test_0',
+                pane: 'pane_StrefyPlanistyczne_2',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
@@ -175,7 +196,7 @@
                     break;
                 case 'SJ':
                     return {
-                pane: 'pane_strefy_test_0',
+                pane: 'pane_StrefyPlanistyczne_2',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
@@ -190,7 +211,7 @@
                     break;
                 case 'SZ':
                     return {
-                pane: 'pane_strefy_test_0',
+                pane: 'pane_StrefyPlanistyczne_2',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
@@ -205,7 +226,7 @@
                     break;
                 case 'SU':
                     return {
-                pane: 'pane_strefy_test_0',
+                pane: 'pane_StrefyPlanistyczne_2',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
@@ -220,7 +241,7 @@
                     break;
                 case 'SH':
                     return {
-                pane: 'pane_strefy_test_0',
+                pane: 'pane_StrefyPlanistyczne_2',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
@@ -235,7 +256,7 @@
                     break;
                 case 'SP':
                     return {
-                pane: 'pane_strefy_test_0',
+                pane: 'pane_StrefyPlanistyczne_2',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
@@ -250,7 +271,7 @@
                     break;
                 case 'SR':
                     return {
-                pane: 'pane_strefy_test_0',
+                pane: 'pane_StrefyPlanistyczne_2',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
@@ -265,7 +286,7 @@
                     break;
                 case 'SI':
                     return {
-                pane: 'pane_strefy_test_0',
+                pane: 'pane_StrefyPlanistyczne_2',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
@@ -280,7 +301,7 @@
                     break;
                 case 'SN':
                     return {
-                pane: 'pane_strefy_test_0',
+                pane: 'pane_StrefyPlanistyczne_2',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
@@ -295,7 +316,7 @@
                     break;
                 case 'SC':
                     return {
-                pane: 'pane_strefy_test_0',
+                pane: 'pane_StrefyPlanistyczne_2',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
@@ -310,7 +331,7 @@
                     break;
                 case 'SG':
                     return {
-                pane: 'pane_strefy_test_0',
+                pane: 'pane_StrefyPlanistyczne_2',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
@@ -325,7 +346,7 @@
                     break;
                 case 'SO':
                     return {
-                pane: 'pane_strefy_test_0',
+                pane: 'pane_StrefyPlanistyczne_2',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
@@ -340,7 +361,7 @@
                     break;
                 case 'SK':
                     return {
-                pane: 'pane_strefy_test_0',
+                pane: 'pane_StrefyPlanistyczne_2',
                 opacity: 1,
                 color: 'rgba(54,54,54,1.0)',
                 dashArray: '',
@@ -355,22 +376,26 @@
                     break;
             }
         }
-        map.createPane('pane_strefy_test_0');
-        map.getPane('pane_strefy_test_0').style.zIndex = 400;
-        map.getPane('pane_strefy_test_0').style['mix-blend-mode'] = 'normal';
-        var layer_strefy_test_0 = new L.geoJson(json_strefy_test_0, {
+        map.createPane('pane_StrefyPlanistyczne_2');
+        map.getPane('pane_StrefyPlanistyczne_2').style.zIndex = 402;
+        map.getPane('pane_StrefyPlanistyczne_2').style['mix-blend-mode'] = 'normal';
+        var layer_StrefyPlanistyczne_2 = new L.geoJson(json_StrefyPlanistyczne_2, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_strefy_test_0',
-            layerName: 'layer_strefy_test_0',
-            pane: 'pane_strefy_test_0',
-            onEachFeature: pop_strefy_test_0,
-            style: style_strefy_test_0_0,
+            dataVar: 'json_StrefyPlanistyczne_2',
+            layerName: 'layer_StrefyPlanistyczne_2',
+            pane: 'pane_StrefyPlanistyczne_2',
+            onEachFeature: pop_StrefyPlanistyczne_2,
+            style: style_StrefyPlanistyczne_2_0,
         });
-        bounds_group.addLayer(layer_strefy_test_0);
-        map.addLayer(layer_strefy_test_0);
-        function pop_ObszarUzupelnieniaZabudowy_1_1(feature, layer) {
+        bounds_group.addLayer(layer_StrefyPlanistyczne_2);
+        map.addLayer(layer_StrefyPlanistyczne_2);
+        function pop_ObszarUzupelnieniaZabudowy_1_3(feature, layer) {
             var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">oznaczenie</th>\
+                        <td class="visible-with-data" id="oznaczenie">' + (feature.properties['oznaczenie'] !== null ? autolinker.link(String(feature.properties['oznaczenie']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
 			layer.on('popupopen', function(e) {
@@ -379,9 +404,9 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_ObszarUzupelnieniaZabudowy_1_1_0() {
+        function style_ObszarUzupelnieniaZabudowy_1_3_0() {
             return {
-                pane: 'pane_ObszarUzupelnieniaZabudowy_1_1',
+                pane: 'pane_ObszarUzupelnieniaZabudowy_1_3',
                 opacity: 1,
                 color: 'rgba(83,83,83,1.0)',
                 dashArray: '',
@@ -392,7 +417,7 @@
                 interactive: false,
             }
         }
-        var pattern_ObszarUzupelnieniaZabudowy_1_1_1 = new L.StripePattern({
+        var pattern_ObszarUzupelnieniaZabudowy_1_3_1 = new L.StripePattern({
             weight: 0.4,
             spaceWeight: 2.0,
             color: '#535353',
@@ -400,32 +425,35 @@
             spaceOpacity: 0,
             angle: 270
         });
-        pattern_ObszarUzupelnieniaZabudowy_1_1_1.addTo(map);
-        function style_ObszarUzupelnieniaZabudowy_1_1_1() {
+        pattern_ObszarUzupelnieniaZabudowy_1_3_1.addTo(map);
+        function style_ObszarUzupelnieniaZabudowy_1_3_1() {
             return {
-                pane: 'pane_ObszarUzupelnieniaZabudowy_1_1',
+                pane: 'pane_ObszarUzupelnieniaZabudowy_1_3',
                 stroke: false,
                 fillOpacity: 1,
-                fillPattern: pattern_ObszarUzupelnieniaZabudowy_1_1_1,
+                fillPattern: pattern_ObszarUzupelnieniaZabudowy_1_3_1,
                 interactive: false,
             }
         }
-        map.createPane('pane_ObszarUzupelnieniaZabudowy_1_1');
-        map.getPane('pane_ObszarUzupelnieniaZabudowy_1_1').style.zIndex = 401;
-        map.getPane('pane_ObszarUzupelnieniaZabudowy_1_1').style['mix-blend-mode'] = 'normal';
-        var layer_ObszarUzupelnieniaZabudowy_1_1 = new L.geoJson.multiStyle(json_ObszarUzupelnieniaZabudowy_1_1, {
+        map.createPane('pane_ObszarUzupelnieniaZabudowy_1_3');
+        map.getPane('pane_ObszarUzupelnieniaZabudowy_1_3').style.zIndex = 403;
+        map.getPane('pane_ObszarUzupelnieniaZabudowy_1_3').style['mix-blend-mode'] = 'normal';
+        var layer_ObszarUzupelnieniaZabudowy_1_3 = new L.geoJson.multiStyle(json_ObszarUzupelnieniaZabudowy_1_3, {
             attribution: '',
             interactive: false,
-            dataVar: 'json_ObszarUzupelnieniaZabudowy_1_1',
-            layerName: 'layer_ObszarUzupelnieniaZabudowy_1_1',
-            pane: 'pane_ObszarUzupelnieniaZabudowy_1_1',
-            onEachFeature: pop_ObszarUzupelnieniaZabudowy_1_1,
-            styles: [style_ObszarUzupelnieniaZabudowy_1_1_0,style_ObszarUzupelnieniaZabudowy_1_1_1,]
+            dataVar: 'json_ObszarUzupelnieniaZabudowy_1_3',
+            layerName: 'layer_ObszarUzupelnieniaZabudowy_1_3',
+            pane: 'pane_ObszarUzupelnieniaZabudowy_1_3',
+            onEachFeature: pop_ObszarUzupelnieniaZabudowy_1_3,
+            styles: [style_ObszarUzupelnieniaZabudowy_1_3_0,style_ObszarUzupelnieniaZabudowy_1_3_1,]
         });
-        bounds_group.addLayer(layer_ObszarUzupelnieniaZabudowy_1_1);
-        map.addLayer(layer_ObszarUzupelnieniaZabudowy_1_1);
-        function pop_AktPlanowaniaPrzestrzennego_1_2(feature, layer) {
+        bounds_group.addLayer(layer_ObszarUzupelnieniaZabudowy_1_3);
+        map.addLayer(layer_ObszarUzupelnieniaZabudowy_1_3);
+        function pop_AktPlanowaniaPrzestrzennego_1_4(feature, layer) {
             var popupContent = '<table>\
+                    <tr>\
+                        <td class="visible-with-data" id="tytul" colspan="2"><strong>tytul</strong><br />' + (feature.properties['tytul'] !== null ? autolinker.link(String(feature.properties['tytul']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
 			layer.on('popupopen', function(e) {
@@ -434,9 +462,9 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_AktPlanowaniaPrzestrzennego_1_2_0() {
+        function style_AktPlanowaniaPrzestrzennego_1_4_0() {
             return {
-                pane: 'pane_AktPlanowaniaPrzestrzennego_1_2',
+                pane: 'pane_AktPlanowaniaPrzestrzennego_1_4',
                 opacity: 1,
                 color: 'rgba(83,83,83,1.0)',
                 dashArray: '44.0,22.0',
@@ -447,31 +475,26 @@
                 interactive: false,
             }
         }
-        map.createPane('pane_AktPlanowaniaPrzestrzennego_1_2');
-        map.getPane('pane_AktPlanowaniaPrzestrzennego_1_2').style.zIndex = 402;
-        map.getPane('pane_AktPlanowaniaPrzestrzennego_1_2').style['mix-blend-mode'] = 'normal';
-        var layer_AktPlanowaniaPrzestrzennego_1_2 = new L.geoJson(json_AktPlanowaniaPrzestrzennego_1_2, {
+        map.createPane('pane_AktPlanowaniaPrzestrzennego_1_4');
+        map.getPane('pane_AktPlanowaniaPrzestrzennego_1_4').style.zIndex = 404;
+        map.getPane('pane_AktPlanowaniaPrzestrzennego_1_4').style['mix-blend-mode'] = 'normal';
+        var layer_AktPlanowaniaPrzestrzennego_1_4 = new L.geoJson(json_AktPlanowaniaPrzestrzennego_1_4, {
             attribution: '',
             interactive: false,
-            dataVar: 'json_AktPlanowaniaPrzestrzennego_1_2',
-            layerName: 'layer_AktPlanowaniaPrzestrzennego_1_2',
-            pane: 'pane_AktPlanowaniaPrzestrzennego_1_2',
-            onEachFeature: pop_AktPlanowaniaPrzestrzennego_1_2,
-            style: style_AktPlanowaniaPrzestrzennego_1_2_0,
+            dataVar: 'json_AktPlanowaniaPrzestrzennego_1_4',
+            layerName: 'layer_AktPlanowaniaPrzestrzennego_1_4',
+            pane: 'pane_AktPlanowaniaPrzestrzennego_1_4',
+            onEachFeature: pop_AktPlanowaniaPrzestrzennego_1_4,
+            style: style_AktPlanowaniaPrzestrzennego_1_4_0,
         });
-        bounds_group.addLayer(layer_AktPlanowaniaPrzestrzennego_1_2);
-        map.addLayer(layer_AktPlanowaniaPrzestrzennego_1_2);
+        bounds_group.addLayer(layer_AktPlanowaniaPrzestrzennego_1_4);
+        map.addLayer(layer_AktPlanowaniaPrzestrzennego_1_4);
         var overlaysTree = [
-            {label: '<img src="legend/AktPlanowaniaPrzestrzennego_1_2.png" /> AktPlanowaniaPrzestrzennego_1', layer: layer_AktPlanowaniaPrzestrzennego_1_2},
-            {label: '<img src="legend/ObszarUzupelnieniaZabudowy_1_1.png" /> ObszarUzupelnieniaZabudowy_1', layer: layer_ObszarUzupelnieniaZabudowy_1_1},
-            {label: 'strefy_test<br /><table><tr><td style="text-align: center;"><img src="legend/strefy_test_0_SWstrefawielofunkcyjnazzabudowąmieszkaniowąwielorodzinną0.png" /></td><td>SW - strefa wielofunkcyjna 
-z zabudową
-mieszkaniową
-wielorodzinną</td></tr><tr><td style="text-align: center;"><img src="legend/strefy_test_0_SJstrefawielofunkcyjnazzabudowąmieszkaniowąjednorodzinną1.png" /></td><td>SJ - strefa wielofunkcyjna 
-z zabudową
-mieszkaniową
-jednorodzinną</td></tr><tr><td style="text-align: center;"><img src="legend/strefy_test_0_SZstrefawielofunkcyjnazzabudowązagrodową2.png" /></td><td>SZ - strefa wielofunkcyjna 
-z zabudową zagrodową</td></tr><tr><td style="text-align: center;"><img src="legend/strefy_test_0_SUstrefausługowa3.png" /></td><td>SU - strefa usługowa</td></tr><tr><td style="text-align: center;"><img src="legend/strefy_test_0_SHstrefahandluwielkopowierzchniowego4.png" /></td><td>SH - strefa handlu  wielkopowierzchniowego</td></tr><tr><td style="text-align: center;"><img src="legend/strefy_test_0_SPstrefagospodarcza5.png" /></td><td>SP - strefa gospodarcza</td></tr><tr><td style="text-align: center;"><img src="legend/strefy_test_0_SRstrefaprodukcjirolniczej6.png" /></td><td>SR - strefa produkcji  rolniczej</td></tr><tr><td style="text-align: center;"><img src="legend/strefy_test_0_SIstrefainfrastrukturalna7.png" /></td><td>SI - strefa  infrastrukturalna</td></tr><tr><td style="text-align: center;"><img src="legend/strefy_test_0_SNstrefazieleniirekreacji8.png" /></td><td>SN - strefa zieleni i rekreacji</td></tr><tr><td style="text-align: center;"><img src="legend/strefy_test_0_SCstrefacmentarzy9.png" /></td><td>SC - strefa cmentarzy</td></tr><tr><td style="text-align: center;"><img src="legend/strefy_test_0_SGstrefagórnictwa10.png" /></td><td>SG - strefa górnictwa</td></tr><tr><td style="text-align: center;"><img src="legend/strefy_test_0_SOstrefaotwarta11.png" /></td><td>SO - strefa otwarta</td></tr><tr><td style="text-align: center;"><img src="legend/strefy_test_0_SKstrefakomunikacyjna12.png" /></td><td>SK - strefa komunikacyjna</td></tr></table>', layer: layer_strefy_test_0},]
+            {label: '<img src="legend/AktPlanowaniaPrzestrzennego_1_4.png" /> AktPlanowaniaPrzestrzennego_1', layer: layer_AktPlanowaniaPrzestrzennego_1_4},
+            {label: '<img src="legend/ObszarUzupelnieniaZabudowy_1_3.png" /> ObszarUzupelnieniaZabudowy_1', layer: layer_ObszarUzupelnieniaZabudowy_1_3},
+            {label: 'Strefy Planistyczne<br /><table><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_tududud0.png" /></td><td>tududud</td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_1.png" /></td><td></td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_2.png" /></td><td></td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_3.png" /></td><td></td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_4.png" /></td><td></td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_5.png" /></td><td></td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_6.png" /></td><td></td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_7.png" /></td><td></td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_8.png" /></td><td></td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_9.png" /></td><td></td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_10.png" /></td><td></td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_11.png" /></td><td></td></tr><tr><td style="text-align: center;"><img src="legend/StrefyPlanistyczne_2_12.png" /></td><td></td></tr></table>', layer: layer_StrefyPlanistyczne_2},
+            {label: "Google Satellite", layer: layer_GoogleSatellite_1},
+            {label: "OSM", layer: layer_OSM_0},]
         var lay = L.control.layers.tree(null, overlaysTree,{
             //namedToggle: true,
             //selectorBack: false,
@@ -534,12 +557,12 @@ z zabudową zagrodową</td></tr><tr><td style="text-align: center;"><img src="le
         });       
         setBounds();
         var i = 0;
-        layer_strefy_test_0.eachLayer(function(layer) {
+        layer_StrefyPlanistyczne_2.eachLayer(function(layer) {
             var context = {
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((layer.feature.properties['oznaczenie'] !== null?String('<div style="color: #000000; font-size: 3pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['oznaczenie']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_strefy_test_0'});
+            layer.bindTooltip((layer.feature.properties['oznaczenie'] !== null?String('<div style="color: #000000; font-size: 11pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['oznaczenie']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_StrefyPlanistyczne_2'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
@@ -547,192 +570,27 @@ z zabudową zagrodową</td></tr><tr><td style="text-align: center;"><img src="le
               i++;
         });
         var i = 0;
-        layer_ObszarUzupelnieniaZabudowy_1_1.eachLayer(function(layer) {
+        layer_ObszarUzupelnieniaZabudowy_1_3.eachLayer(function(layer) {
             var context = {
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((layer.feature.properties['oznaczenie'] !== null?String('<div style="color: #323232; font-size: 3pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['oznaczenie']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_ObszarUzupelnieniaZabudowy_1_1'});
+            layer.bindTooltip((layer.feature.properties['oznaczenie'] !== null?String('<div style="color: #323232; font-size: 3pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['oznaczenie']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_ObszarUzupelnieniaZabudowy_1_3'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
               addLabel(layer, i);
               i++;
         });
-        var mapDiv = document.getElementById('map');
-        var row = document.createElement('div');
-        row.className="row";
-        row.id="all";
-        row.style.height = "100%";
-        var col1 = document.createElement('div');
-        col1.className="col9";
-        col1.id = "mapWindow";
-        col1.style.height = "99%";
-        col1.style.width = "80%";
-        col1.style.display = "inline-block";
-        var col2 = document.createElement('div');
-        col2.className="col3";
-        col2.id = "menu";
-        col2.style.display = "inline-block";
-        mapDiv.parentNode.insertBefore(row, mapDiv);
-        document.getElementById("all").appendChild(col1);
-        document.getElementById("all").appendChild(col2);
-        col1.appendChild(mapDiv)
-        var Filters = {"typPlanu": "str"};
-        function filterFunc() {
-          map.eachLayer(function(lyr){
-          if ("options" in lyr && "dataVar" in lyr["options"]){
-            features = this[lyr["options"]["dataVar"]].features.slice(0);
-            try{
-              for (key in Filters){
-                keyS = key.replace(/[^a-zA-Z0-9_]/g, "")
-                if (Filters[key] == "str" || Filters[key] == "bool"){
-                  var selection = [];
-                  var options = document.getElementById("sel_" + keyS).options
-                  for (var i=0; i < options.length; i++) {
-                    if (options[i].selected) selection.push(options[i].value);
-                  }
-                    try{
-                      if (key in features[0].properties){
-                        for (i = features.length - 1;
-                          i >= 0; --i){
-                          if (selection.indexOf(
-                          features[i].properties[key])<0
-                          && selection.length>0) {
-                          features.splice(i,1);
-                          }
-                        }
-                      }
-                    } catch(err){
-                  }
-                }
-                if (Filters[key] == "int"){
-                  sliderVals =  document.getElementById(
-                    "div_" + keyS).noUiSlider.get();
-                  try{
-                    if (key in features[0].properties){
-                    for (i = features.length - 1; i >= 0; --i){
-                      if (parseInt(features[i].properties[key])
-                          < sliderVals[0]
-                          || parseInt(features[i].properties[key])
-                          > sliderVals[1]){
-                            features.splice(i,1);
-                          }
-                        }
-                      }
-                    } catch(err){
-                    }
-                  }
-                if (Filters[key] == "real"){
-                  sliderVals =  document.getElementById(
-                    "div_" + keyS).noUiSlider.get();
-                  try{
-                    if (key in features[0].properties){
-                    for (i = features.length - 1; i >= 0; --i){
-                      if (features[i].properties[key]
-                          < sliderVals[0]
-                          || features[i].properties[key]
-                          > sliderVals[1]){
-                            features.splice(i,1);
-                          }
-                        }
-                      }
-                    } catch(err){
-                    }
-                  }
-                if (Filters[key] == "date"
-                  || Filters[key] == "datetime"
-                  || Filters[key] == "time"){
-                  try{
-                    if (key in features[0].properties){
-                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '');
-                      startdate = document.getElementById("dat_" +
-                        HTMLkey + "_date1").value.replace(" ", "T");
-                      enddate = document.getElementById("dat_" +
-                        HTMLkey + "_date2").value.replace(" ", "T");
-                      for (i = features.length - 1; i >= 0; --i){
-                        if (features[i].properties[key] < startdate
-                          || features[i].properties[key] > enddate){
-                          features.splice(i,1);
-                        }
-                      }
-                    }
-                  } catch(err){
-                  }
-                }
-              }
-            } catch(err){
-            }
-          this[lyr["options"]["layerName"]].clearLayers();
-          this[lyr["options"]["layerName"]].addData(features);
-        var i = 0;
-        layer_strefy_test_0.eachLayer(function(layer) {
-            var context = {
-                feature: layer.feature,
-                variables: {}
-            };
-            layer.bindTooltip((layer.feature.properties['oznaczenie'] !== null?String('<div style="color: #000000; font-size: 3pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['oznaczenie']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_strefy_test_0'});
-            labels.push(layer);
-            totalMarkers += 1;
-              layer.added = true;
-              addLabel(layer, i);
-              i++;
-        });
-        var i = 0;
-        layer_ObszarUzupelnieniaZabudowy_1_1.eachLayer(function(layer) {
-            var context = {
-                feature: layer.feature,
-                variables: {}
-            };
-            layer.bindTooltip((layer.feature.properties['oznaczenie'] !== null?String('<div style="color: #323232; font-size: 3pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['oznaczenie']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_ObszarUzupelnieniaZabudowy_1_1'});
-            labels.push(layer);
-            totalMarkers += 1;
-              layer.added = true;
-              addLabel(layer, i);
-              i++;
-        });
-          }
-          })
-        }
-            document.getElementById("menu").appendChild(
-                document.createElement("div"));
-            var div_typPlanu = document.createElement('div');
-            div_typPlanu.id = "div_typPlanu";
-            div_typPlanu.className= "filterselect";
-            document.getElementById("menu").appendChild(div_typPlanu);
-            sel_typPlanu = document.createElement('select');
-            sel_typPlanu.multiple = true;
-            sel_typPlanu.size = 1;
-            sel_typPlanu.id = "sel_typPlanu";
-            var typPlanu_options_str = "<option value='' unselected></option>";
-            sel_typPlanu.onchange = function(){filterFunc()};
-            typPlanu_options_str  += '<option value="plan ogólny gminy">plan ogólny gminy</option>';
-            sel_typPlanu.innerHTML = typPlanu_options_str;
-            div_typPlanu.appendChild(sel_typPlanu);
-            var lab_typPlanu = document.createElement('div');
-            lab_typPlanu.innerHTML = 'typPlanu';
-            lab_typPlanu.className = 'filterlabel';
-            div_typPlanu.appendChild(lab_typPlanu);
-            var reset_typPlanu = document.createElement('div');
-            reset_typPlanu.innerHTML = 'clear filter';
-            reset_typPlanu.className = 'filterlabel';
-            reset_typPlanu.onclick = function() {
-                var options = document.getElementById("sel_typPlanu").options;
-                for (var i=0; i < options.length; i++) {
-                    options[i].selected = false;
-                }
-                filterFunc();
-            };
-            div_typPlanu.appendChild(reset_typPlanu);
-        resetLabels([layer_strefy_test_0,layer_ObszarUzupelnieniaZabudowy_1_1]);
+        resetLabels([layer_StrefyPlanistyczne_2,layer_ObszarUzupelnieniaZabudowy_1_3]);
         map.on("zoomend", function(){
-            resetLabels([layer_strefy_test_0,layer_ObszarUzupelnieniaZabudowy_1_1]);
+            resetLabels([layer_StrefyPlanistyczne_2,layer_ObszarUzupelnieniaZabudowy_1_3]);
         });
         map.on("layeradd", function(){
-            resetLabels([layer_strefy_test_0,layer_ObszarUzupelnieniaZabudowy_1_1]);
+            resetLabels([layer_StrefyPlanistyczne_2,layer_ObszarUzupelnieniaZabudowy_1_3]);
         });
         map.on("layerremove", function(){
-            resetLabels([layer_strefy_test_0,layer_ObszarUzupelnieniaZabudowy_1_1]);
+            resetLabels([layer_StrefyPlanistyczne_2,layer_ObszarUzupelnieniaZabudowy_1_3]);
         });
         </script>        
     </body>
